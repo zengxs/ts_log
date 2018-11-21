@@ -80,8 +80,7 @@ def __push_data_to_influx(block_timeout=1):
 def install_monitor(spider_name,
                     host=socket.gethostname(),
                     influx_endpoint='http://127.0.0.1:8086/write?db=spiders',
-                    influx_measurement='heartbeat',
-                    heartbeat_interval=10,
+                    heartbeat_interval=1,
                     push_consumers=1):
     """ 安装进程监控器
     监视进程的cpu占用与内存占用
