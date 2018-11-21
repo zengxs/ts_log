@@ -55,16 +55,16 @@ def push_ts_data(measurement,
     put(request)
 
 
-def __push_data_to_influx(request_timeout=1):
+def __push_data_to_influx(block_timeout=1):
     """ 推送时序数据
     """
     global __log_queue
     logger = logging.getLogger('influx_pushd')
     while True:
         try:
-            req = __log_queue.get()  # type: TsRequest
+            req = __log_queue.get(timeout=block_timeout)  # type: TsRequest
             r = requests.post(
-                req.endpoint, data=req.data, timeout=request_timeout)
+                req.endpoint, data=req.data, timeout=block_timeout)
             if not r.ok:
                 logger.warning(r.headers)
         except QueueEmptyException as e:
