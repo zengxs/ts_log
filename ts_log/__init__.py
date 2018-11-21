@@ -113,7 +113,7 @@ def install_monitor(spider_name,
                         'cpu_percent': cpu_percent,
                         'mem_usage': mem_usage,
                     },
-                    time=datetime.utcnow())
+                    time=datetime.now())
             except Exception as e:
                 heartbeat_logger.exception(e)
 
