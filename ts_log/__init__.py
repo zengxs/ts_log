@@ -21,7 +21,7 @@ __log_queue = Queue(maxsize=4096)
 def push_ts_data(measurement,
                  tags,
                  fields,
-                 utctime=None,
+                 time=None,
                  endpoint=None,
                  wait=True):
     """
@@ -31,8 +31,8 @@ def push_ts_data(measurement,
     :param tags: 存入数据的标签
     :type fields: dict
     :param fields: 存入数据的值
-    :type utctime: datetime
-    :param utctime: utc datetime时间 datetime.datetime.utcnow()
+    :type time: datetime
+    :param time: datetime时间 datetime.datetime.now()
     :type endpoint: str
     :param endpoint: influx 的 endpoint;
         如为 None 则使用 install_monitor 初始化的 endpoint
@@ -41,7 +41,7 @@ def push_ts_data(measurement,
     """
     global __log_queue, __influx_endpoint
     point = {
-        'time': utctime or datetime.utcnow(),
+        'time': time or datetime.now(),
         'measurement': measurement,
         'tags': tags,
         'fields': fields,
@@ -111,7 +111,7 @@ def install_monitor(spider_name,
                         'cpu_percent': cpu_percent,
                         'mem_usage': mem_usage,
                     },
-                    utctime=datetime.utcnow())
+                    time=datetime.utcnow())
             except Exception as e:
                 heartbeat_logger.exception(e)
 
@@ -142,5 +142,5 @@ if __name__ == '__main__':
                 'reason': 'HTTP OK',
                 'cost': 12.3
             },
-            utctime=datetime.utcnow())
+            time=datetime.utcnow())
         time.sleep(1)

@@ -31,6 +31,6 @@ push_ts_data(
         'cost_time': 10.23,  # 10.23ms
         'reason': 'OK',
     },
-    utctime=datetime.utcnow())
+    time=datetime.now())
 ~~~
 
