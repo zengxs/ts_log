@@ -26,7 +26,7 @@ push_ts_data(
         'spider-name': 'test',
         'host': '10.1.1.10',
         'status_code': 200,
-    ),
+    },
     fields={
         'cost_time': 10.23,  # 10.23ms
         'reason': 'OK',
