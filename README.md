@@ -6,6 +6,7 @@ pip install git+https://github.com/zengxs/ts_log.git
 
 基本用法：
 ~~~py
+from ts_log import install_monitor
 install_monitor(
     'test',  # 爬虫名称
     host='10.1.2.10',  # 本机地址
@@ -17,7 +18,7 @@ install_monitor(
 监控其他数据：
 ~~~py
 from datetime import datetime
-from .log import push_ts_data
+from ts_log import push_ts_data
 
 push_ts_data(
     measurement='responses',
