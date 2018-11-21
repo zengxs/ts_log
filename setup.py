@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ts-log",
+    name="ts_log",
     version="0.0.1",
     description="timeseries log module",
     url='https://github.com/zengxs/ts_log',
