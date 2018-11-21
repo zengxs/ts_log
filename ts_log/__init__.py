@@ -4,7 +4,6 @@ import socket
 import threading
 import time
 from collections import namedtuple
-from datetime import datetime
 from queue import Empty as QueueEmptyException
 from queue import Queue
 
@@ -16,6 +15,11 @@ TsRequest = namedtuple('TsRequest', ['endpoint', 'data'])
 
 __influx_endpoint = None
 __log_queue = Queue(maxsize=4096)
+
+
+def get_nanosecond_timestamp():
+    """ 返回当前时间的 19 位时间戳 """
+    return int(time.time() * (10 ** 9))
 
 
 def push_ts_data(measurement,
@@ -31,8 +35,8 @@ def push_ts_data(measurement,
     :param tags: 存入数据的标签
     :type fields: dict
     :param fields: 存入数据的值
-    :type time: datetime
-    :param time: datetime时间 datetime.datetime.now()
+    :type time: int
+    :param time: 19 位时间戳 
     :type endpoint: str
     :param endpoint: influx 的 endpoint;
         如为 None 则使用 install_monitor 初始化的 endpoint
@@ -41,7 +45,7 @@ def push_ts_data(measurement,
     """
     global __log_queue, __influx_endpoint
     point = {
-        'time': time or datetime.now(),
+        'time': time or get_nanosecond_timestamp(),
         'measurement': measurement,
         'tags': tags,
         'fields': fields,
@@ -113,7 +117,7 @@ def install_monitor(spider_name,
                         'cpu_percent': cpu_percent,
                         'mem_usage': mem_usage,
                     },
-                    time=datetime.now())
+                    time=get_nanosecond_timestamp())
             except Exception as e:
                 heartbeat_logger.exception(e)
 
@@ -145,5 +149,5 @@ if __name__ == '__main__':
                 'reason': 'HTTP OK',
                 'cost': 12.3
             },
-            time=datetime.utcnow())
+            time=get_nanosecond_timestamp())
         time.sleep(1)

@@ -17,7 +17,7 @@ install_monitor(
 
 监控其他数据：
 ~~~py
-from datetime import datetime
+import time
 from ts_log import push_ts_data
 
 push_ts_data(
@@ -31,6 +31,6 @@ push_ts_data(
         'cost_time': 10.23,  # 10.23ms
         'reason': 'OK',
     },
-    time=datetime.now())
+    time=int(time.time() * (10 ** 9)))
 ~~~
 
