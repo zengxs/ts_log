@@ -77,7 +77,8 @@ def install_monitor(spider_name,
                     host=socket.gethostname(),
                     influx_endpoint='http://127.0.0.1:8086/write?db=spiders',
                     influx_measurement='heartbeat',
-                    heartbeat_interval=10):
+                    heartbeat_interval=10,
+                    push_consumers=1):
     """ 安装进程监控器
     监视进程的cpu占用与内存占用
 
@@ -86,6 +87,7 @@ def install_monitor(spider_name,
     :param influx_endpoint: influxdb 接口地址
     :param influx_measurement: 数据被保存的 measurement，通常无需更改
     :param heartbeat_interval: 上报心跳包的间隔时间 (seconds)
+    :param push_consumers: 日志推送线程数
     """
     global __influx_endpoint
     __influx_endpoint = influx_endpoint
@@ -120,9 +122,10 @@ def install_monitor(spider_name,
     heartbeat_thread.setDaemon(True)
     heartbeat_thread.start()
 
-    bg_push_thread = threading.Thread(target=__push_data_to_influx)
-    bg_push_thread.setDaemon(True)
-    bg_push_thread.start()
+    for i in range(push_consumers):
+        bg_push_thread = threading.Thread(target=__push_data_to_influx)
+        bg_push_thread.setDaemon(True)
+        bg_push_thread.start()
 
 
 if __name__ == '__main__':
