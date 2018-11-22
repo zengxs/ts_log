@@ -17,6 +17,10 @@ __influx_endpoint = None
 __log_queue = Queue(maxsize=4096)
 
 
+class ArgumentError(ValueError):
+    pass
+
+
 def get_nanosecond_timestamp():
     """ 返回当前时间的 19 位时间戳 """
     return int(time.time() * (10**9))
@@ -44,6 +48,14 @@ def push_ts_data(measurement,
     :param wait: 入队时是否阻塞，如为 False 且队列已满可能会抛出异常
     """
     global __log_queue, __influx_endpoint
+
+    # 校验参数
+    for _, v in fields.items():
+        if v:
+            break
+    else:
+        raise ArgumentError
+
     point = {
         'time': time or get_nanosecond_timestamp(),
         'measurement': measurement,
@@ -105,7 +117,7 @@ def install_monitor(spider_name,
                 current_process = psutil.Process(current_pid)
                 cpu_percent = current_process.cpu_percent(interval)
                 mem_usage = current_process.memory_full_info().uss
-                heartbeat_logger.debug(
+                heartbeat_logger.info(
                     f'PID({current_pid}) {spider_name}, {host}, {cpu_percent}%, {mem_usage} Bytes'
                 )
                 push_ts_data(
