@@ -19,7 +19,7 @@ __log_queue = Queue(maxsize=4096)
 
 def get_nanosecond_timestamp():
     """ 返回当前时间的 19 位时间戳 """
-    return int(time.time() * (10 ** 9))
+    return int(time.time() * (10**9))
 
 
 def push_ts_data(measurement,
@@ -81,7 +81,8 @@ def install_monitor(spider_name,
                     host=socket.gethostname(),
                     influx_endpoint='http://127.0.0.1:8086/write?db=spiders',
                     heartbeat_interval=1,
-                    push_consumers=1):
+                    push_consumers=1,
+                    without_heartbeat=False):
     """ 安装进程监控器
     监视进程的cpu占用与内存占用
 
@@ -91,6 +92,7 @@ def install_monitor(spider_name,
     :param influx_measurement: 数据被保存的 measurement，通常无需更改
     :param heartbeat_interval: 上报心跳包的间隔时间 (seconds)
     :param push_consumers: 日志推送线程数
+    :param without_heartbeat: 是否自动发送心跳包
     """
     global __influx_endpoint
     __influx_endpoint = influx_endpoint
@@ -120,10 +122,11 @@ def install_monitor(spider_name,
             except Exception as e:
                 heartbeat_logger.exception(e)
 
-    heartbeat_thread = threading.Thread(
-        target=heartbeat, args=(heartbeat_interval, ))
-    heartbeat_thread.setDaemon(True)
-    heartbeat_thread.start()
+    if not without_heartbeat:
+        heartbeat_thread = threading.Thread(
+            target=heartbeat, args=(heartbeat_interval, ))
+        heartbeat_thread.setDaemon(True)
+        heartbeat_thread.start()
 
     for i in range(push_consumers):
         bg_push_thread = threading.Thread(target=__push_data_to_influx)
