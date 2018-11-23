@@ -4,7 +4,7 @@
 pip install git+https://github.com/zengxs/ts_log.git
 ~~~
 
-基本用法：
+初始化：
 ~~~py
 from ts_log import install_monitor
 install_monitor(
@@ -12,6 +12,15 @@ install_monitor(
     host='10.1.2.10',  # 本机地址
     influx_endpoint='http://10.1.1.127:8086/write?db=spiders',  # 监控数据库服务器地址
     heartbeat_interval=1,  # 心跳间隔
+)
+~~~
+
+不启用心跳包的初始化：
+~~~py
+from ts_log import install_monitor
+install_monitor(
+    influx_endpoint='http://10.1.1.127:8086/write?db=spiders',
+    without_heartbeat=True,
 )
 ~~~
 

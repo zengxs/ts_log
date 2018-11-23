@@ -14,7 +14,7 @@ from influxdb.line_protocol import make_lines
 TsRequest = namedtuple('TsRequest', ['endpoint', 'data'])
 
 __influx_endpoint = None
-__log_queue = Queue(maxsize=4096)
+__log_queue = None
 
 
 class ArgumentError(ValueError):
@@ -93,6 +93,7 @@ def install_monitor(spider_name,
                     host=socket.gethostname(),
                     influx_endpoint='http://127.0.0.1:8086/write?db=spiders',
                     heartbeat_interval=1,
+                    queue_size=4096,
                     push_consumers=1,
                     without_heartbeat=False):
     """ 安装进程监控器
@@ -103,10 +104,13 @@ def install_monitor(spider_name,
     :param influx_endpoint: influxdb 接口地址
     :param influx_measurement: 数据被保存的 measurement，通常无需更改
     :param heartbeat_interval: 上报心跳包的间隔时间 (seconds)
+    :param queue_size: 队列大小 (默认 4096)
     :param push_consumers: 日志推送线程数
     :param without_heartbeat: 是否自动发送心跳包
     """
-    global __influx_endpoint
+    global __log_queue, __influx_endpoint
+    if __log_queue is None:
+        __log_queue = Queue(maxsize=queue_size)
     __influx_endpoint = influx_endpoint
     heartbeat_logger = logging.getLogger('heartbeat')
 
